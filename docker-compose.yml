@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  # seq:
+  #   image: datalust/seq:latest
+
+  # sqldata:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest 
+
+  # nosqldata:
+  #   image: mongo
+
+  # basketdata:
+  #   image: redis:alpine
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+
+  blazorapp:
+    image: ${REGISTRY:-microtest}/blazorapp:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: BlazorApp/Dockerfile
+    depends_on:
+      - httpaggregator
+      - webapigateway
+
+  sample-api:
+    image: ${REGISTRY:-microtest}/sample-api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: GrpcService/Dockerfile
+
+
+  httpaggregator:
+    image: ${REGISTRY:-microtest}/httpaggregator:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: ApiGateways/Aggregators/Dockerfile
+    depends_on:
+      - sample-api
+
+  webapigateway:
+    # image: envoyproxy/envoy:v1.28-latest
+    image: envoyproxy/envoy:v1.14.2
+

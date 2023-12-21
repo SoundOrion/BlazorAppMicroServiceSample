@@ -1,0 +1,77 @@
+version: '3.4'
+
+services:
+  # seq:
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #   ports:
+  #     - "5340:80"
+
+  # sqldata:
+  #   environment:
+  #     - SA_PASSWORD=Pass@word
+  #     - ACCEPT_EULA=Y
+  #   ports:
+  #     - "5433:1433"
+  #   volumes:
+  #     - eshop-sqldata:/var/opt/mssql
+
+  # nosqldata:
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - eshop-nosqldata:/data/db
+
+  # basketdata:
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - eshop-basketdata:/data
+  # rabbitmq:
+  #   ports:
+  #     - "15672:15672"
+  #     - "5672:5672"
+
+  blazorapp:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - ASPNETCORE_HTTPS_PORTS=81
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      # - PurchaseUrl=http://webapigateway
+    ports:
+      - "5100:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  sample-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - ASPNETCORE_HTTPS_PORTS=81
+      - GRPC_PORT=81
+      - PORT=80
+      - PATH_BASE=/sample-api
+    ports:
+      - "5101:80"
+      - "9101:81"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  httpaggregator:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      # - urls__sample=http://sample-api
+    ports:
+      - "5121:80"
+
+  webapigateway:
+    volumes:
+      - ./ApiGateways/Envoy/config/envoy.yaml:/etc/envoy/envoy.yaml
+    ports:
+    - "5202:80"
+    - "15202:8001"
+
