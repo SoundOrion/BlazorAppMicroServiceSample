@@ -46,12 +46,12 @@ public class GreeterService
 
         var responseString = await _httpClient.GetStringAsync(uri);
 
-        var message = JsonSerializer.Deserialize<string>(responseString, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        //var message = JsonSerializer.Deserialize<string>(responseString, new JsonSerializerOptions
+        //{
+        //    PropertyNameCaseInsensitive = true
+        //});
 
-        return message;
+        return responseString;
     }
 }
 
