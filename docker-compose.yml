@@ -41,6 +41,6 @@ services:
       - sample-api
 
   webapigateway:
-    # image: envoyproxy/envoy:v1.28-latest
-    image: envoyproxy/envoy:v1.14.2
+    # image: envoyproxy/envoy:v1.28.0
+    image: envoyproxy/envoy:v1.16.5
 
